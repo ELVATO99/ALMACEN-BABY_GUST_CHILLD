@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#0d0618"/>
+<title>Scanner — Baby Gust Child</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0d0618;--bg2:#140c22;--bg3:#1c1030;--card:#1e1232;--card2:#261840;
+  --b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15);
+  --p1:#ff6fd8;--p2:#a78bfa;--p3:#60d9fa;--p4:#fbbf24;--p5:#34d399;--p6:#f87171;
+  --g1:linear-gradient(135deg,#ff6fd8,#a78bfa);
+  --g2:linear-gradient(135deg,#a78bfa,#60d9fa);
+  --g3:linear-gradient(135deg,#34d399,#60d9fa);
+  --tx:#f0eaff;--tx2:#c4b5e8;--tx3:#7c6a9e;
+  --F:'Baloo 2',cursive;--B:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;color:var(--tx);font-family:var(--B);overflow:hidden}
+
+/* ── CÁMARA FULLSCREEN ── */
+.cam-full{
+  position:fixed;inset:0;z-index:0;
+  background:#000;
+  display:flex;align-items:center;justify-content:center;
+}
+#reader{width:100%;height:100%}
+#reader video{width:100%!important;height:100vh!important;object-fit:cover!important}
+/* Ocultar controles feos de html5-qrcode */
+#reader__dashboard{display:none!important}
+#reader__header_message{display:none!important}
+#reader__status_span{display:none!important}
+#reader__camera_permission_button{display:none!important}
+#reader__filescan_input{display:none!important}
+
+/* ── OVERLAY ── */
+.overlay{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  pointer-events:none;
+}
+
+/* Top bar */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  padding:.875rem 1rem;
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.7) 0%,transparent 100%);
+}
+.topbar-logo{
+  width:36px;height:36px;border-radius:11px;
+  background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.topbar-txt h1{font-family:var(--F);font-size:15px;font-weight:800;background:var(--g2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar-txt p{font-size:10px;color:rgba(255,255,255,.5);margin-top:1px}
+.topbar-back{
+  margin-left:auto;display:flex;align-items:center;gap:4px;
+  padding:5px 10px;border-radius:99px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  font-size:10px;font-weight:700;color:rgba(255,255,255,.8);
+  text-decoration:none;font-family:var(--F);
+  pointer-events:all;
+}
+
+/* Marco de escaneo estilo Telegram */
+.scan-frame-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+.scan-frame{
+  width:240px;height:240px;position:relative;
+}
+/* Las 4 esquinas del marco */
+.sc{position:absolute;width:28px;height:28px;border-color:var(--p3);border-style:solid}
+.sc-tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:6px 0 0 0}
+.sc-tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 6px 0 0}
+.sc-bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 6px}
+.sc-br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 6px 0}
+/* Línea de escaneo animada */
+.scan-line{
+  position:absolute;left:8px;right:8px;height:2.5px;
+  background:linear-gradient(90deg,transparent,var(--p3),var(--p3),transparent);
+  border-radius:2px;box-shadow:0 0 8px var(--p3),0 0 16px rgba(96,217,250,.5);
+  animation:scanline 2s ease-in-out infinite;
+}
+@keyframes scanline{
+  0%{top:8px;opacity:1}
+  50%{top:calc(100% - 10px);opacity:1}
+  100%{top:8px;opacity:1}
+}
+/* Bordes suaves del área de escaneo */
+.scan-shade-h{
+  position:absolute;left:0;right:0;height:30px;
+}
+.scan-shade-top{top:0;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent)}
+.scan-shade-bot{bottom:0;background:linear-gradient(to top,rgba(0,0,0,.5),transparent)}
+.scan-shade-v{
+  position:absolute;top:0;bottom:0;width:30px;
+}
+.scan-shade-left{left:0;background:linear-gradient(to right,rgba(0,0,0,.5),transparent)}
+.scan-shade-right{right:0;background:linear-gradient(to left,rgba(0,0,0,.5),transparent)}
+
+.scan-hint{
+  font-family:var(--F);font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.7);text-align:center;
+  background:rgba(0,0,0,.4);padding:8px 20px;border-radius:99px;
+  backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+/* ── BOTTOM BAR ── */
+.bottombar{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  padding:1rem 1rem 1.5rem;
+  background:linear-gradient(to top,rgba(0,0,0,.8) 0%,transparent 100%);
+  display:flex;flex-direction:column;gap:10px;
+  pointer-events:all;
+}
+.manual-row{display:flex;gap:8px;align-items:center}
+.man-inp-wrap{position:relative;flex:1}
+.man-inp-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--p3);pointer-events:none}
+.man-inp{
+  width:100%;padding:11px 12px 11px 38px;
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.2);
+  border-radius:12px;font-size:14px;font-weight:600;
+  color:#fff;font-family:var(--B);
+  backdrop-filter:blur(8px);
+  transition:all .2s;
+}
+.man-inp:focus{outline:none;border-color:var(--p3);background:rgba(96,217,250,.1)}
+.man-inp::placeholder{color:rgba(255,255,255,.4);font-weight:400}
+.man-btn{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(96,217,250,.2);border:1.5px solid rgba(96,217,250,.4);
+  color:var(--p3);display:flex;align-items:center;justify-content:center;
+  font-size:19px;cursor:pointer;flex-shrink:0;transition:all .15s;
+}
+.man-btn:active{transform:scale(.92)}
+
+/* ── RESULTADO (sheet que sube desde abajo) ── */
+.result-sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:var(--bg);border-radius:24px 24px 0 0;
+  border-top:1px solid var(--b2);
+  transform:translateY(100%);
+  transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+  max-height:80vh;overflow-y:auto;
+  box-shadow:0 -8px 40px rgba(0,0,0,.6);
+}
+.result-sheet.on{transform:translateY(0)}
+.sheet-handle{width:40px;height:4px;border-radius:99px;background:var(--b2);margin:10px auto 0}
+.sheet-close{
+  position:absolute;top:14px;right:16px;
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg3);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:var(--tx3);cursor:pointer;
+}
+.sheet-body{padding:1rem 1rem 2rem}
+
+/* RESULTADO CARD */
+.res-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--b1)}
+.res-emo{width:54px;height:54px;border-radius:15px;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.res-info{flex:1;min-width:0}
+.res-marca{font-size:10px;font-weight:700;color:var(--p4);text-transform:uppercase;letter-spacing:.5px;font-family:var(--F)}
+.res-prod{font-family:var(--F);font-size:18px;font-weight:900;color:var(--tx);line-height:1.1}
+.res-mod{font-size:13px;font-weight:600;margin-top:3px;background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.res-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.rchip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.07);border:1px solid var(--b2);font-size:10px;font-weight:600;color:var(--tx2)}
+.rchip i{font-size:11px;opacity:.7}
+.rchip-bgc{background:rgba(96,217,250,.1);border-color:rgba(96,217,250,.28);color:var(--p3)}
+
+/* PRECIO */
+.precio-box{display:flex;align-items:center;gap:12px;padding:.875rem;border-radius:14px;margin-bottom:1rem;
+  background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(251,191,36,.05));border:1px solid rgba(251,191,36,.3)}
+.precio-ico{width:42px;height:42px;border-radius:11px;background:rgba(251,191,36,.2);border:1px solid rgba(251,191,36,.35);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.precio-lbl{font-size:10px;font-weight:700;color:var(--p4);text-transform:uppercase;letter-spacing:.5px;font-family:var(--F)}
+.precio-val{font-family:var(--F);font-size:28px;font-weight:900;color:var(--p4);line-height:1.1}
+.precio-none{font-size:13px;font-weight:600;color:var(--tx3);font-family:var(--F)}
+
+/* STOCK */
+.stock-ttl{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-family:var(--F);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.stock-tot-lbl{font-family:var(--F);font-size:13px;font-weight:800}
+.st-ok{color:var(--p5)}.st-out{color:var(--p6)}
+.color-group{margin-bottom:10px}
+.cg-header{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.cg-name{font-family:var(--F);font-size:12px;font-weight:800;color:var(--tx2)}
+.cg-total{font-size:11px;font-weight:700;color:var(--p5);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);padding:1px 7px;border-radius:99px;font-family:var(--F)}
+.cg-total.out{color:var(--p6);background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25)}
+.cg-vars{display:flex;flex-wrap:wrap;gap:5px}
+.vch{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:600;font-family:var(--B);border:1px solid}
+.vok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--p5)}
+.vno{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--p6)}
+.vdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vok .vdot{background:var(--p5)}.vno .vdot{background:var(--p6)}
+
+.extra-box{display:flex;gap:7px;padding:.75rem;border-radius:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);font-size:12px;color:var(--tx2);line-height:1.5;margin-top:.75rem}
+.extra-box i{color:var(--p2);flex-shrink:0;font-size:14px;margin-top:1px}
+
+/* STATUS pills */
+.status-pill{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:25;padding:12px 24px;border-radius:99px;
+  font-size:13px;font-weight:700;font-family:var(--F);
+  display:none;align-items:center;gap:8px;
+  backdrop-filter:blur(12px);white-space:nowrap;
+}
+.status-pill.on{display:flex}
+.sp-load{background:rgba(251,191,36,.2);border:1.5px solid rgba(251,191,36,.4);color:var(--p4)}
+.sp-err{background:rgba(248,113,113,.2);border:1.5px solid rgba(248,113,113,.4);color:var(--p6)}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* SCAN SUCCESS flash */
+.flash{position:fixed;inset:0;z-index:15;background:rgba(96,217,250,.15);pointer-events:none;opacity:0;transition:opacity .1s}
+.flash.on{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- CÁMARA FULLSCREEN -->
+<div class="cam-full"><div id="reader"></div></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">🍼</div>
+  <div class="topbar-txt">
+    <h1>Scanner BGC</h1>
+    <p>Baby Gust Child</p>
+  </div>
+  <a class="topbar-back" href="index.html"><i class="ti ti-building-warehouse" style="font-size:13px"></i> Almacén</a>
+</div>
+
+<!-- OVERLAY con marco -->
+<div class="overlay">
+  <div class="scan-frame-wrap">
+    <div class="scan-frame">
+      <div class="sc sc-tl"></div>
+      <div class="sc sc-tr"></div>
+      <div class="sc sc-bl"></div>
+      <div class="sc sc-br"></div>
+      <div class="scan-line"></div>
+    </div>
+    <div class="scan-hint"><i class="ti ti-qrcode" style="font-size:15px;vertical-align:middle"></i> Apuntá al código QR del producto</div>
+  </div>
+</div>
+
+<!-- FLASH de éxito -->
+<div class="flash" id="flash"></div>
+
+<!-- STATUS PILLS -->
+<div class="status-pill sp-load" id="sp-load">
+  <i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Buscando...
+</div>
+<div class="status-pill sp-err" id="sp-err">
+  <i class="ti ti-alert-circle"></i> <span id="err-msg">Código no encontrado</span>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottombar">
+  <div class="manual-row">
+    <div class="man-inp-wrap">
+      <i class="ti ti-keyboard"></i>
+      <input class="man-inp" id="man-inp" type="text" placeholder="O escribí el código BGC manualmente..."
+        onkeydown="if(event.key==='Enter')buscarManual()" autocomplete="off"/>
+    </div>
+    <button class="man-btn" onclick="buscarManual()"><i class="ti ti-search"></i></button>
+  </div>
+</div>
+
+<!-- RESULTADO SHEET -->
+<div class="result-sheet" id="result-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-close" onclick="cerrarSheet()"><i class="ti ti-x"></i></div>
+  <div class="sheet-body" id="sheet-body"></div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbwejc_yhtxmuMyUTgefEpWXdIWn0FdN-3aa4f1N6MDk56Q8obKwIC_w0mCAdZYehwwcCQ/exec";
+
+let scanner=null, lastCode='', lastTime=0, buscando=false;
+
+const EMO={coche:'🚗',auto:'🚗',carrito:'🛒',moises:'🛏',baston:'🦯',andador:'🚶',silla:'🪑',bici:'🚲',bicicleta:'🚲',triciclo:'🔄',pelota:'⚽',peluche:'🧸',muneca:'🪆',cuna:'🛏',cochecito:'🚗',andadera:'🚶',patin:'🛼',patines:'🛼'};
+function emo(a,b){const k=(String(a)+' '+String(b)).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');for(const[kk,v]of Object.entries(EMO))if(k.includes(kk))return v;return '🍼';}
+
+function showSt(id){
+  ['sp-load','sp-err'].forEach(s=>document.getElementById(s).classList.remove('on'));
+  if(id) document.getElementById(id).classList.add('on');
+}
+
+function flash(){
+  const f=document.getElementById('flash');
+  f.classList.add('on');
+  setTimeout(()=>f.classList.remove('on'),200);
+}
+
+// Iniciar scanner automáticamente
+function iniciarScanner(){
+  scanner=new Html5Qrcode("reader");
+  scanner.start(
+    {facingMode:"environment"},
+    {
+      fps:15,
+      qrbox:()=>({width:220,height:220}),
+      aspectRatio:window.innerHeight/window.innerWidth
+    },
+    (decoded)=>{
+      const now=Date.now();
+      if(decoded===lastCode&&now-lastTime<4000) return;
+      if(buscando) return;
+      lastCode=decoded; lastTime=now;
+      if(navigator.vibrate) navigator.vibrate([80,30,80]);
+      flash();
+      buscar(decoded);
+    },
+    ()=>{}
+  ).catch(err=>{
+    document.querySelector('.scan-hint').textContent='❌ Sin acceso a la cámara — usá el campo de abajo';
+  });
+}
+
+function buscarManual(){
+  const cod=document.getElementById('man-inp').value.trim().toUpperCase();
+  if(!cod) return;
+  buscar(cod);
+}
+
+async function buscar(bgc){
+  if(buscando) return;
+  buscando=true;
+  cerrarSheet();
+  showSt('sp-load');
+  try{
+    const r=await fetch(`${API}?action=buscarBGC&bgc=${encodeURIComponent(bgc)}`);
+    const d=await r.json();
+    showSt(null);
+    if(!d.ok){
+      document.getElementById('err-msg').textContent='"'+bgc+'" no encontrado';
+      showSt('sp-err');
+      setTimeout(()=>showSt(null),2500);
+    } else {
+      renderSheet(d.producto);
+    }
+  }catch(e){
+    showSt(null);
+    document.getElementById('err-msg').textContent='Error de conexión';
+    showSt('sp-err');
+    setTimeout(()=>showSt(null),2500);
+  }
+  buscando=false;
+}
+
+function cerrarSheet(){
+  document.getElementById('result-sheet').classList.remove('on');
+}
+
+function renderSheet(p){
+  const total=p.variantes.reduce((s,v)=>s+v.stock,0);
+  const e=emo(p.nombre,p.modelo);
+
+  // Agrupar por color
+  const colorMap={};
+  p.variantes.forEach(v=>{
+    if(!colorMap[v.color]) colorMap[v.color]=[];
+    colorMap[v.color].push(v);
+  });
+  const colorsHtml=Object.entries(colorMap).map(([color,vars])=>{
+    const tot=vars.reduce((s,v)=>s+v.stock,0);
+    const varsHtml=vars.map(v=>{
+      const cls=v.stock<=0?'vch vno':'vch vok';
+      const label=v.observacion||color;
+      return `<span class="${cls}"><span class="vdot"></span><span>${label}</span><span style="font-weight:800;margin-left:2px">${v.stock} ${p.unit}</span></span>`;
+    }).join('');
+    return `<div class="color-group">
+      <div class="cg-header">
+        <span class="cg-name">${color}</span>
+        <span class="cg-total ${tot<=0?'out':''}">${tot} ${p.unit}</span>
+      </div>
+      <div class="cg-vars">${varsHtml}</div>
+    </div>`;
+  }).join('');
+
+  const precioHtml=p.precio
+    ?`<div class="precio-box"><div class="precio-ico">💰</div><div><div class="precio-lbl">Precio de venta</div><div class="precio-val">$ ${Number(p.precio).toLocaleString('es-AR')}</div></div></div>`
+    :`<div class="precio-box" style="background:rgba(255,255,255,.04);border-color:var(--b1)"><div class="precio-ico" style="background:rgba(255,255,255,.06);border-color:var(--b1)">💰</div><div><div class="precio-lbl" style="color:var(--tx3)">Precio de venta</div><div class="precio-none">Sin precio cargado</div></div></div>`;
+
+  const extraHtml=p.extra?`<div class="extra-box"><i class="ti ti-notes"></i>${p.extra}</div>`:'';
+
+  document.getElementById('sheet-body').innerHTML=`
+    <div class="res-header">
+      <div class="res-emo">${e}</div>
+      <div class="res-info">
+        ${p.marca?`<div class="res-marca">${p.marca}</div>`:''}
+        <div class="res-prod">${p.nombre}</div>
+        <div class="res-mod">Modelo: ${p.modelo}</div>
+        <div class="res-chips">
+          <span class="rchip rchip-bgc"><i class="ti ti-qrcode"></i>${p.bgc_code}</span>
+          <span class="rchip"><i class="ti ti-barcode"></i>${p.codigo_fab}</span>
+          <span class="rchip"><i class="ti ti-ruler"></i>${p.unit}</span>
+        </div>
+      </div>
+    </div>
+    ${precioHtml}
+    <div class="stock-ttl">
+      <span><i class="ti ti-packages" style="font-size:12px;vertical-align:middle"></i> Stock por color</span>
+      <span class="stock-tot-lbl ${total<=0?'st-out':'st-ok'}">${total<=0?'SIN STOCK':total+' '+p.unit+' total'}</span>
+    </div>
+    ${colorsHtml}
+    ${extraHtml}`;
+
+  document.getElementById('result-sheet').classList.add('on');
+}
+
+// Iniciar cámara automáticamente al cargar
+window.addEventListener('load',()=>{
+  setTimeout(iniciarScanner, 300);
+});
+</script>
+</body>
+</html>
