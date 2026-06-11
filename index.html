@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="theme-color" content="#0d0618"/>
+<title>Baby Gust Child — Almacén</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0d0618;--bg2:#140c22;--bg3:#1c1030;--card:#1e1232;--card2:#261840;
+  --b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.15);
+  --p1:#ff6fd8;--p2:#a78bfa;--p3:#60d9fa;--p4:#fbbf24;--p5:#34d399;--p6:#f87171;
+  --g1:linear-gradient(135deg,#ff6fd8,#a78bfa);--g2:linear-gradient(135deg,#a78bfa,#60d9fa);
+  --g3:linear-gradient(135deg,#34d399,#60d9fa);
+  --tx:#f0eaff;--tx2:#c4b5e8;--tx3:#7c6a9e;
+  --sh:0 4px 20px rgba(0,0,0,.45);--r:10px;--rl:16px;--rxl:20px;
+  --F:'Baloo 2',cursive;--B:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--B);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 40% at 15% 0%,rgba(167,139,250,.14) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 85% 100%,rgba(255,111,216,.1) 0%,transparent 60%)}
+.app{max-width:440px;margin:0 auto;min-height:100vh;position:relative;z-index:1;padding-bottom:84px}
+
+.hdr{padding:.875rem 1rem;display:flex;align-items:center;gap:12px;background:rgba(13,6,24,.9);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--b2);position:sticky;top:0;z-index:200}
+.hlogo{width:40px;height:40px;border-radius:13px;background:var(--g1);display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 14px rgba(255,111,216,.4)}
+.hbrand h1{font-family:var(--F);font-size:17px;font-weight:800;background:var(--g1);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hbrand p{font-size:10px;color:var(--tx3);margin-top:1px}
+.hright{margin-left:auto;display:flex;gap:6px;align-items:center}
+.spill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;
+  background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.28);
+  font-size:10px;font-weight:700;color:var(--p5);font-family:var(--F);transition:all .3s}
+.spill.sy{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.28);color:var(--p4)}
+.spill.er{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.28);color:var(--p6)}
+.sdot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 2s infinite}
+.spill.sy .sdot{animation:blink .4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hscanner{display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:99px;
+  background:rgba(96,217,250,.1);border:1px solid rgba(96,217,250,.25);
+  font-size:10px;font-weight:700;color:var(--p3);text-decoration:none;font-family:var(--F)}
+
+.nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--b1);position:sticky;top:64px;z-index:199}
+.nt{flex:1;padding:9px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  border:none;background:transparent;cursor:pointer;color:var(--tx3);
+  font-family:var(--F);font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+  border-bottom:2.5px solid transparent;transition:all .18s}
+.nt i{font-size:17px}
+.nt.s.on{color:var(--p3);border-bottom-color:var(--p3);background:rgba(96,217,250,.06)}
+.nt.e.on{color:var(--p5);border-bottom-color:var(--p5);background:rgba(52,211,153,.06)}
+.nt.v.on{color:var(--p1);border-bottom-color:var(--p1);background:rgba(255,111,216,.06)}
+.nt.h.on{color:var(--p2);border-bottom-color:var(--p2);background:rgba(167,139,250,.06)}
+.nt.x.on{color:var(--p4);border-bottom-color:var(--p4);background:rgba(251,191,36,.06)}
+
+.pnl{display:none;padding:1rem;animation:fi .2s ease}
+.pnl.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.shero{background:var(--card);border:1px solid var(--b2);border-radius:var(--rxl);padding:1.125rem;margin-bottom:.875rem;box-shadow:var(--sh)}
+.shero-ttl{font-family:var(--F);font-size:14px;font-weight:800;background:var(--g2);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.75rem;display:flex;align-items:center;gap:7px}
+.sbox{display:flex;gap:8px;align-items:center}
+.sinwrap{position:relative;flex:1}
+.sinwrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:17px;color:var(--p3);pointer-events:none}
+.sin{width:100%;padding:11px 12px 11px 40px;background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rl);font-size:14px;font-weight:500;color:var(--tx);font-family:var(--B);transition:all .2s}
+.sin:focus{outline:none;border-color:var(--p3);background:var(--bg2);box-shadow:0 0 0 3px rgba(96,217,250,.1)}
+.sin::placeholder{color:var(--tx3)}
+.sico{width:42px;height:42px;border-radius:var(--r);border:1px solid;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;background:transparent}
+.sico-x{color:var(--tx3);border-color:var(--b2)}.sico-r{color:var(--p5);border-color:rgba(52,211,153,.25);background:rgba(52,211,153,.08)}
+.rinfo{font-size:11px;color:var(--tx3);margin-top:8px;display:none}.rinfo b{color:var(--p3)}
+
+/* PRODUCT CARD */
+.pc{background:var(--card);border:1px solid var(--b1);border-radius:var(--rxl);margin-bottom:10px;box-shadow:var(--sh);overflow:hidden}
+.pc-stripe{height:3px;background:var(--g1)}
+.pc-body{padding:.875rem 1rem 1rem}
+.pc-top{display:flex;align-items:flex-start;gap:11px}
+.pc-emo{width:44px;height:44px;border-radius:13px;flex-shrink:0;background:var(--bg3);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:22px}
+.pc-info{flex:1;min-width:0}
+.pc-marca{font-size:10px;font-weight:700;color:var(--p4);text-transform:uppercase;letter-spacing:.5px;font-family:var(--F);margin-bottom:2px}
+.pc-name{font-family:var(--F);font-size:15px;font-weight:800;color:var(--tx);line-height:1.2}
+.pc-mod{font-size:12px;font-weight:600;margin-top:2px;background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pc-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.mchip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--b2);font-size:10px;font-weight:600;color:var(--tx2)}
+.mchip i{font-size:11px;opacity:.65}
+.mchip-bgc{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.3);color:var(--p2)}
+.mchip-price{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--p4)}
+.pc-extra{font-size:11px;color:var(--tx2);padding:5px 9px;border-radius:8px;margin-top:7px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);display:flex;align-items:flex-start;gap:5px;line-height:1.5}
+.pc-extra i{color:var(--p2);flex-shrink:0;font-size:12px;margin-top:1px}
+.pc-tot{text-align:right;flex-shrink:0;min-width:60px}
+.tnum{font-family:var(--F);font-size:34px;font-weight:900;line-height:1}
+.tnum.ok{background:var(--g3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tnum.out{color:var(--p6)}
+.tunit{font-size:9px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.tbadge{font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;margin-top:4px;display:inline-block;font-family:var(--F);letter-spacing:.4px}
+.tok{background:rgba(52,211,153,.15);color:var(--p5);border:1px solid rgba(52,211,153,.3)}
+.tout{background:rgba(248,113,113,.15);color:var(--p6);border:1px solid rgba(248,113,113,.3)}
+
+/* VARIANTES agrupadas */
+.pc-vars{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--b1)}
+.vlbl{font-size:9px;color:var(--tx3);font-weight:700;letter-spacing:.6px;text-transform:uppercase;margin-bottom:8px}
+.color-group{margin-bottom:10px}
+.color-group-header{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.color-name{font-family:var(--F);font-size:12px;font-weight:800;color:var(--tx2)}
+.color-total{font-size:11px;font-weight:700;color:var(--p5);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);padding:1px 7px;border-radius:99px;font-family:var(--F)}
+.color-total.out{color:var(--p6);background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25)}
+.color-vars{display:flex;flex-wrap:wrap;gap:5px}
+.vch{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:600;font-family:var(--B);border:1px solid}
+.vok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--p5)}
+.vno{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--p6)}
+.vdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vok .vdot{background:var(--p5)}.vno .vdot{background:var(--p6)}
+.vqty{font-weight:800}
+.vobs{font-size:10px;color:var(--p2);font-style:italic}
+
+/* QR en card */
+.pc-qr-section{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--b1);display:flex;align-items:center;gap:12px}
+.pc-qr-box{background:#fff;border-radius:10px;padding:6px;flex-shrink:0}
+.pc-qr-info{flex:1}
+.pc-qr-code{font-family:var(--F);font-size:12px;font-weight:800;color:var(--p2);margin-bottom:6px}
+.pc-qr-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:var(--r);
+  background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);
+  color:var(--p2);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--F);transition:all .15s}
+.pc-qr-btn:hover{background:rgba(167,139,250,.25)}
+.pc-qr-btn:active{transform:scale(.95)}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1.5rem}
+.eico{font-size:52px;margin-bottom:10px;display:block}
+.empty h3{font-family:var(--F);font-size:15px;font-weight:700;color:var(--tx2);margin-bottom:5px}
+.empty p{font-size:12px;color:var(--tx3);line-height:1.6}
+
+/* FORM */
+.fsec{background:var(--card);border:1px solid var(--b1);border-radius:var(--rxl);padding:1.25rem;margin-bottom:12px;box-shadow:var(--sh)}
+.fhd{display:flex;align-items:center;gap:11px;margin-bottom:1rem;padding-bottom:.875rem;border-bottom:1px solid var(--b1)}
+.fhico{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.fhg{background:rgba(52,211,153,.15);color:var(--p5);border:1px solid rgba(52,211,153,.28)}
+.fhp{background:rgba(255,111,216,.15);color:var(--p1);border:1px solid rgba(255,111,216,.28)}
+.fhtxt h2{font-family:var(--F);font-size:14px;font-weight:800;color:var(--tx)}
+.fhtxt p{font-size:11px;color:var(--tx3);margin-top:2px}
+.frow{display:flex;gap:10px;margin-bottom:11px}
+.fg{flex:1;display:flex;flex-direction:column;gap:5px}
+.flb{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;font-family:var(--F);display:flex;align-items:center;gap:4px}
+.flb i{font-size:12px;color:var(--p2)}.req{color:var(--p1)}
+.fin,.fse,.fta{font-size:14px;font-weight:500;padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--b2);background:var(--bg3);color:var(--tx);font-family:var(--B);width:100%;transition:all .2s}
+.fin:focus,.fse:focus,.fta:focus{outline:none;border-color:var(--p2);background:var(--bg2);box-shadow:0 0 0 3px rgba(167,139,250,.1)}
+.fin::placeholder{color:var(--tx3);font-weight:400}
+.fse option{background:var(--bg2)}.fta{resize:vertical;min-height:68px}
+.sttl{font-size:10px;font-weight:700;color:var(--tx3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:9px;display:flex;align-items:center;gap:6px;font-family:var(--F)}
+.sttl::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* QR preview tras guardar */
+.bc-preview{background:var(--card);border:1px solid rgba(167,139,250,.3);border-radius:var(--rxl);padding:1.25rem;margin-bottom:12px;box-shadow:var(--sh);display:none;text-align:center}
+.bc-preview.on{display:block}
+.bc-preview-ttl{font-family:var(--F);font-size:14px;font-weight:800;background:var(--g2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.bc-preview-sub{font-size:11px;color:var(--tx3);margin-bottom:1rem}
+.bc-preview-box{background:#fff;border-radius:12px;padding:1rem;display:inline-block;margin-bottom:.75rem}
+.bc-preview-cod{font-family:var(--F);font-size:16px;font-weight:900;color:var(--p2);margin-bottom:.5rem}
+.bc-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r);background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:var(--p2);font-size:12px;font-weight:700;cursor:pointer;font-family:var(--F);margin-top:8px}
+
+.btn{width:100%;padding:13px;border-radius:var(--rl);border:none;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--F);display:flex;align-items:center;justify-content:center;gap:7px;transition:all .18s}
+.btn:active{transform:scale(.97)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.bg{background:var(--g3);color:#071a10;box-shadow:0 4px 16px rgba(52,211,153,.3)}
+.bp{background:var(--g1);color:#1a0030;box-shadow:0 4px 16px rgba(255,111,216,.3)}
+
+.mc{background:var(--card);border:1px solid var(--b1);border-radius:var(--rl);padding:.875rem 1rem;margin-bottom:8px;display:flex;align-items:flex-start;gap:11px;box-shadow:var(--sh)}
+.mico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.mi-en{background:rgba(52,211,153,.14);color:var(--p5);border:1px solid rgba(52,211,153,.25)}
+.mi-sa{background:rgba(255,111,216,.14);color:var(--p1);border:1px solid rgba(255,111,216,.25)}
+.mb{flex:1;min-width:0}
+.mp{font-family:var(--F);font-size:13px;font-weight:700;color:var(--tx)}
+.mm{font-size:11px;color:var(--p2);font-weight:500;margin-top:2px}
+.md{font-size:11px;color:var(--tx3);margin-top:2px}
+.mf{font-size:10px;color:var(--tx3);margin-top:4px;display:flex;align-items:center;gap:4px;font-family:var(--F)}
+.mq{font-family:var(--F);font-size:17px;font-weight:900;flex-shrink:0;text-align:right}
+.mq.en{color:var(--p5)}.mq.sa{color:var(--p1)}
+.mqu{font-size:10px;font-weight:500;color:var(--tx3)}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);border:1px solid var(--b2);color:var(--tx);padding:11px 20px;border-radius:var(--rl);font-size:13px;font-weight:600;font-family:var(--F);transition:all .28s;z-index:9999;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.55)}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+.ldg{position:fixed;inset:0;z-index:9998;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}
+.ldg.off{opacity:0;pointer-events:none}
+.ldgico{font-size:58px;margin-bottom:14px;animation:fl 1.4s ease-in-out infinite alternate}
+@keyframes fl{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.ldgnm{font-family:var(--F);font-size:22px;font-weight:900;background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.ldgsb{font-size:12px;color:var(--tx3);margin-bottom:24px}
+.ldots{display:flex;gap:8px}
+.ldots span{width:9px;height:9px;border-radius:50%;animation:db .7s ease-in-out infinite alternate}
+.ldots span:nth-child(1){background:var(--p1);animation-delay:0s}
+.ldots span:nth-child(2){background:var(--p2);animation-delay:.13s}
+.ldots span:nth-child(3){background:var(--p3);animation-delay:.26s}
+@keyframes db{from{transform:scale(.5);opacity:.3}to{transform:scale(1);opacity:1}}
+
+.cfila{display:flex;gap:8px;align-items:flex-start;padding:.75rem;background:var(--bg3);border:1px solid var(--b2);border-radius:var(--r)}
+.cfila-rm{width:32px;height:32px;border-radius:var(--r);border:1px solid rgba(248,113,113,.3);background:rgba(248,113,113,.1);color:var(--p6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px}
+
+/* ── LOGIN ── */
+.login-screen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);padding:2rem 1.5rem;transition:opacity .4s}
+.login-screen.off{opacity:0;pointer-events:none}
+.login-logo{width:72px;height:72px;border-radius:22px;background:var(--g1);display:flex;align-items:center;
+  justify-content:center;font-size:36px;margin-bottom:1.25rem;box-shadow:0 8px 24px rgba(255,111,216,.4)}
+.login-title{font-family:var(--F);font-size:24px;font-weight:900;background:var(--g1);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;text-align:center}
+.login-sub{font-size:12px;color:var(--tx3);margin-bottom:2rem;text-align:center}
+.login-card{background:var(--card);border:1px solid var(--b2);border-radius:var(--rxl);padding:1.5rem;width:100%;max-width:360px;box-shadow:var(--sh)}
+.login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.login-label{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.5px;font-family:var(--F);display:flex;align-items:center;gap:4px}
+.login-input{font-size:15px;font-weight:600;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--b2);background:var(--bg3);color:var(--tx);font-family:var(--B);width:100%;transition:all .2s}
+.login-input:focus{outline:none;border-color:var(--p2);background:var(--bg2);box-shadow:0 0 0 3px rgba(167,139,250,.1)}
+.login-input::placeholder{color:var(--tx3);font-weight:400}
+.login-btn{width:100%;padding:13px;border-radius:var(--rl);border:none;font-size:14px;font-weight:800;cursor:pointer;font-family:var(--F);background:var(--g1);color:#1a0030;box-shadow:0 4px 16px rgba(255,111,216,.3);margin-top:4px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.login-btn:active{transform:scale(.97)}
+.login-err{font-size:12px;font-weight:700;color:var(--p6);text-align:center;margin-top:10px;font-family:var(--F);display:none}
+.login-err.on{display:block}
+.login-welcome{font-size:13px;color:var(--tx3);text-align:center;margin-top:1rem;font-family:var(--F)}
+.login-welcome b{color:var(--p2)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-logo">🍼</div>
+  <div class="login-title">Baby Gust Child</div>
+  <div class="login-sub">Sistema de gestión de almacén</div>
+  <div class="login-card">
+    <div class="login-field">
+      <label class="login-label"><i class="ti ti-user" style="font-size:12px"></i> Usuario</label>
+      <input class="login-input" id="login-user" type="text" placeholder="Escribí tu nombre..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()"/>
+    </div>
+    <div class="login-field">
+      <label class="login-label"><i class="ti ti-lock" style="font-size:12px"></i> Clave</label>
+      <input class="login-input" id="login-pass" type="password" placeholder="Ingresá tu clave..."
+        onkeydown="if(event.key==='Enter')iniciarSesion()"/>
+    </div>
+    <button class="login-btn" onclick="iniciarSesion()"><i class="ti ti-login"></i> Ingresar</button>
+    <div class="login-err" id="login-err">Usuario o clave incorrectos</div>
+  </div>
+  <div class="login-welcome">Sistema exclusivo de <b>Baby Gust Child</b></div>
+</div>
+
+<div class="ldg" id="ldg">
+  <div class="ldgico">🍼</div><div class="ldgnm">Baby Gust Child</div>
+  <div class="ldgsb">Cargando tu almacén...</div>
+  <div class="ldots"><span></span><span></span><span></span></div>
+</div>
+<div class="app">
+  <div class="hdr">
+    <div class="hlogo">🍼</div>
+    <div class="hbrand"><h1>Baby Gust Child</h1><p id="fhdr">Almacén inteligente</p></div>
+    <div class="hright">
+      <a class="hscanner" href="scanner-baby-gust.html"><i class="ti ti-scan" style="font-size:13px"></i> Scanner</a>
+      <div class="spill" id="spill"><div class="sdot"></div><span id="slbl">ONLINE</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nt s" id="nt-stock"       onclick="go('stock')"><i class="ti ti-search"></i>Buscar</button>
+    <button class="nt e" id="nt-entrada"     onclick="go('entrada')"><i class="ti ti-arrow-bar-to-down"></i>Entrada</button>
+    <button class="nt v" id="nt-salida"      onclick="go('salida')"><i class="ti ti-arrow-bar-to-up"></i>Salida</button>
+    <button class="nt h" id="nt-movimientos" onclick="go('movimientos')"><i class="ti ti-history"></i>Historial</button>
+    <button class="nt x" id="nt-editar"      onclick="go('editar')"><i class="ti ti-edit"></i>Editar</button>
+  </div>
+
+  <!-- BUSCAR -->
+  <div id="pnl-stock" class="pnl">
+    <div class="shero">
+      <div class="shero-ttl"><i class="ti ti-search" style="color:var(--p3)"></i> Buscá tu producto</div>
+      <div class="sbox">
+        <div class="sinwrap"><i class="ti ti-search"></i>
+          <input class="sin" id="buscador" type="text" placeholder="Marca, nombre, modelo, código o comentario..." oninput="renderStock()" autocomplete="off"/>
+        </div>
+        <button class="sico sico-x" onclick="limpiar()"><i class="ti ti-x"></i></button>
+        <button class="sico sico-r" onclick="cargarDatos()"><i class="ti ti-refresh"></i></button>
+      </div>
+      <div class="rinfo" id="rinfo">Mostrando <b id="rcnt">0</b> resultado(s)</div>
+    </div>
+    <div id="slist"><div class="empty"><span class="eico">🔍</span><h3>Buscá un producto</h3><p>Marca, nombre, modelo, código BGC<br>o cualquier observación</p></div></div>
+  </div>
+
+  <!-- ENTRADA -->
+  <div id="pnl-entrada" class="pnl">
+    <div class="bc-preview" id="bc-preview">
+      <div class="bc-preview-ttl">🎉 Producto registrado</div>
+      <div class="bc-preview-sub">QR generado — escanealo para consultar stock</div>
+      <div class="bc-preview-box"><div id="bc-qr" style="width:180px;height:180px"></div></div>
+      <div class="bc-preview-cod" id="bc-cod-txt"></div>
+      <div style="font-size:11px;color:var(--tx3)">Guardá una foto o imprimí para pegar en el producto</div>
+      <button class="bc-btn" onclick="imprimirQR('bc-qr', document.getElementById('bc-cod-txt').textContent)">
+        <i class="ti ti-printer"></i> Imprimir / Guardar QR
+      </button>
+    </div>
+    <div class="fsec">
+      <div class="fhd">
+        <div class="fhico fhg"><i class="ti ti-arrow-bar-to-down"></i></div>
+        <div class="fhtxt"><h2>Registrar ingreso</h2><p>Mercadería que entra al almacén</p></div>
+      </div>
+      <div class="sttl"><i class="ti ti-info-circle"></i> Datos del producto</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flb"><i class="ti ti-building-factory"></i> Marca</label>
+          <input class="fin" id="emarca" type="text" placeholder="Ej: Kiddo, Disney..." list="dl-marca" autocomplete="off"/>
+          <datalist id="dl-marca"></datalist>
+        </div>
+        <div class="fg" style="flex:2">
+          <label class="flb"><i class="ti ti-baby-carriage"></i> Producto <span class="req">*</span></label>
+          <input class="fin" id="ep" type="text" placeholder="Ej: Coche" list="dl-prod" autocomplete="off" oninput="filtrarModelos()"/>
+          <datalist id="dl-prod"></datalist>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg" style="flex:2">
+          <label class="flb"><i class="ti ti-tag"></i> Modelo <span class="req">*</span></label>
+          <input class="fin" id="em" type="text" placeholder="Ej: Roma" list="dl-mod" autocomplete="off" oninput="filtrarCodigos()"/>
+          <datalist id="dl-mod"></datalist>
+        </div>
+        <div class="fg">
+          <label class="flb"><i class="ti ti-barcode"></i> Código fábrica <span class="req">*</span></label>
+          <input class="fin" id="ec" type="text" placeholder="Ej: 1413" list="dl-cod" autocomplete="off" oninput="filtrarColores()"/>
+          <datalist id="dl-cod"></datalist>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flb"><i class="ti ti-ruler"></i> Unidad</label>
+          <select class="fse" id="eu"><option>unid.</option><option>par</option><option>caja</option><option>pack</option><option>set</option></select>
+        </div>
+        <div class="fg">
+          <label class="flb"><i class="ti ti-currency-dollar"></i> Precio venta</label>
+          <input class="fin" id="epr" type="number" min="0" step="0.01" placeholder="0.00"/>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:12px">
+        <label class="flb"><i class="ti ti-notes"></i> Característica adicional (opcional)</label>
+        <textarea class="fta" id="ex" placeholder="Ej: Con música, plegable..."></textarea>
+      </div>
+      <div class="sttl"><i class="ti ti-palette"></i> Colores, cantidades y observaciones</div>
+      <div id="colores-lista" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
+      <button type="button" onclick="agregarColorFila()"
+        style="width:100%;padding:9px;border-radius:var(--r);border:1.5px dashed rgba(167,139,250,.4);
+        background:transparent;color:var(--p2);font-size:13px;font-weight:700;cursor:pointer;
+        font-family:var(--F);display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:14px">
+        <i class="ti ti-plus"></i> Agregar otro color
+      </button>
+      <button class="btn bg" id="bing" onclick="entrada()"><i class="ti ti-circle-plus"></i> Ingresar al almacén</button>
+    </div>
+  </div>
+
+  <!-- SALIDA -->
+  <div id="pnl-salida" class="pnl">
+    <div class="fsec">
+      <div class="fhd">
+        <div class="fhico fhp"><i class="ti ti-arrow-bar-to-up"></i></div>
+        <div class="fhtxt"><h2>Registrar venta / salida</h2><p>Descontá lo que sale del almacén</p></div>
+      </div>
+      <div class="fg" style="margin-bottom:11px">
+        <label class="flb"><i class="ti ti-baby-carriage"></i> Producto <span class="req">*</span></label>
+        <select class="fse" id="sp" onchange="onSP()"><option value="">— seleccioná —</option></select>
+      </div>
+      <div class="fg" style="margin-bottom:11px">
+        <label class="flb"><i class="ti ti-tag"></i> Modelo <span class="req">*</span></label>
+        <select class="fse" id="sm" onchange="onSM()"><option value="">— elegí producto —</option></select>
+      </div>
+      <div class="fg" style="margin-bottom:11px">
+        <label class="flb"><i class="ti ti-barcode"></i> Código fábrica <span class="req">*</span></label>
+        <select class="fse" id="sk" onchange="onSK()"><option value="">— elegí modelo —</option></select>
+      </div>
+      <div class="fg" style="margin-bottom:11px">
+        <label class="flb"><i class="ti ti-palette"></i> Color / Variante <span class="req">*</span></label>
+        <select class="fse" id="sc"><option value="">— elegí código —</option></select>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flb"><i class="ti ti-hash"></i> Cantidad <span class="req">*</span></label>
+          <input class="fin" id="sq" type="number" min="1" placeholder="0"/>
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:14px">
+        <label class="flb"><i class="ti ti-notes"></i> Motivo (opcional)</label>
+        <input class="fin" id="smt" type="text" placeholder="Venta, devolución, consumo..."/>
+      </div>
+      <button class="btn bp" onclick="salida()"><i class="ti ti-circle-minus"></i> Descontar del stock</button>
+    </div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div id="pnl-movimientos" class="pnl">
+    <div class="sttl" style="margin-bottom:12px"><i class="ti ti-history" style="color:var(--p2)"></i> Movimientos recientes</div>
+    <div id="mlist"></div>
+  </div>
+
+  <!-- EDITAR -->
+  <div id="pnl-editar" class="pnl">
+    <div class="fsec">
+      <div class="fhd">
+        <div class="fhico" style="background:rgba(251,191,36,.15);color:var(--p4);border:1px solid rgba(251,191,36,.28)"><i class="ti ti-edit"></i></div>
+        <div class="fhtxt"><h2>Editar / Corregir producto</h2><p>Buscá el producto con error y fusionalo</p></div>
+      </div>
+      <div style="position:relative;margin-bottom:12px">
+        <i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--p4);pointer-events:none"></i>
+        <input class="fin" id="edit-search" type="text" style="padding-left:38px;border-color:rgba(251,191,36,.3)" placeholder="Nombre o modelo con error..." oninput="renderEditList()"/>
+      </div>
+      <div id="edit-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div id="fusionar-panel" style="display:none">
+      <div class="fsec" style="border-color:rgba(251,191,36,.3)">
+        <div class="sttl" style="color:var(--p4)"><i class="ti ti-arrow-merge"></i> Fusionar con el correcto</div>
+        <div style="padding:.75rem;border-radius:var(--r);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);margin-bottom:12px;font-size:12px;color:var(--tx2);line-height:1.6">
+          <b style="color:var(--p4)">¿Cómo funciona?</b><br>El stock del erróneo se suma al correcto y el erróneo se elimina.
+        </div>
+        <div style="background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);border-radius:var(--r);padding:.75rem;margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;color:var(--p6);font-family:var(--F);text-transform:uppercase;margin-bottom:4px">❌ Se eliminará</div>
+          <div id="fus-origen-txt" style="font-size:13px;font-weight:700;color:var(--tx)"></div>
+        </div>
+        <div class="fg" style="margin-bottom:12px">
+          <label class="flb" style="color:var(--p5)"><i class="ti ti-check"></i> Producto correcto (destino)</label>
+          <select class="fse" id="fus-destino" style="border-color:rgba(52,211,153,.3)"><option value="">— seleccioná el correcto —</option></select>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="background:rgba(52,211,153,.15);border:1px solid rgba(52,211,153,.3);color:var(--p5);flex:2" onclick="confirmarFusion()"><i class="ti ti-arrow-merge"></i> Fusionar</button>
+          <button class="btn" style="background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.3);color:var(--p6);flex:1" onclick="confirmarEliminar()"><i class="ti ti-trash"></i> Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbwejc_yhtxmuMyUTgefEpWXdIWn0FdN-3aa4f1N6MDk56Q8obKwIC_w0mCAdZYehwwcCQ/exec";
+let prods=[], movs=[];
+
+async function apiG(a){const r=await fetch(`${API}?action=${a}`);return r.json();}
+async function apiP(d){const r=await fetch(API,{method:'POST',body:JSON.stringify(d)});return r.json();}
+
+function sy(s){
+  const p=document.getElementById('spill'),l=document.getElementById('slbl');
+  p.className='spill'+(s==='sy'?' sy':s==='er'?' er':'');
+  l.textContent=s==='sy'?'SYNC...':s==='er'?'ERROR':'ONLINE';
+}
+async function cargarDatos(){
+  sy('sy');
+  try{
+    const[rp,rm]=await Promise.all([apiG('getProductos'),apiG('getMovimientos')]);
+    if(rp.ok) prods=rp.productos;
+    if(rm.ok) movs=rm.movimientos;
+    renderStock();dl();sy('ok');
+  }catch(e){sy('er');toast('❌ Sin conexión con Google Sheets');}
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),3500);}
+function n(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim();}
+function limpiar(){
+  document.getElementById('buscador').value='';
+  document.getElementById('rinfo').style.display='none';
+  document.getElementById('slist').innerHTML='<div class="empty"><span class="eico">🔍</span><h3>Buscá un producto</h3><p>Marca, nombre, modelo, código BGC<br>o cualquier observación</p></div>';
+}
+
+const CMAP={'rojo':'#f87171','roja':'#f87171','red':'#f87171','verde':'#34d399','green':'#34d399','azul':'#60a5fa','blue':'#60a5fa','amarillo':'#fbbf24','yellow':'#fbbf24','naranja':'#fb923c','orange':'#fb923c','rosa':'#f472b6','pink':'#f472b6','violeta':'#a78bfa','morado':'#a78bfa','purple':'#a78bfa','blanco':'#e2e8f0','white':'#e2e8f0','negro':'#64748b','black':'#64748b','gris':'#94a3b8','gray':'#94a3b8','grey':'#94a3b8','celeste':'#7dd3fc','turquesa':'#2dd4bf','marron':'#b45309','marrón':'#b45309','brown':'#b45309','beige':'#d4b896','dorado':'#f59e0b','plateado':'#94a3b8','fucsia':'#e879f9','lila':'#c4b5fd','salmon':'#fca5a5','crema':'#fef3c7','lima':'#a3e635','cyan':'#22d3ee'};
+const CFALLBACK=['#60d9fa','#a78bfa','#ff6fd8','#fbbf24','#34d399','#f87171','#fb923c','#2dd4bf'];
+const ccache={};let cidx=0;
+function getColorFor(name){const k=String(name).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();const c=CMAP[k];if(c)return c;if(!ccache[k]){ccache[k]=CFALLBACK[cidx%CFALLBACK.length];cidx++;}return ccache[k];}
+function hex2rgba(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
+const EMO={coche:'🚗',auto:'🚗',carrito:'🛒',moises:'🛏',baston:'🦯',andador:'🚶',silla:'🪑',bici:'🚲',bicicleta:'🚲',triciclo:'🔄',pelota:'⚽',peluche:'🧸',muneca:'🪆',cuna:'🛏',cochecito:'🚗',andadera:'🚶',patin:'🛼',patines:'🛼',carpeta:'🎒',bolso:'👜'};
+function emo(a,b){const k=n(a+' '+b);for(const[kk,v]of Object.entries(EMO))if(k.includes(kk))return v;return '🍼';}
+
+function dl(){
+  const set=(id,arr)=>{const e=document.getElementById(id);if(e)e.innerHTML=[...new Set(arr.filter(Boolean))].map(x=>`<option value="${x}">`).join('');};
+  set('dl-marca',prods.map(p=>p.marca));
+  set('dl-prod', prods.map(p=>p.nombre));
+  set('dl-mod',  prods.map(p=>p.modelo));
+  set('dl-cod',  prods.map(p=>p.codigo_fab));
+}
+function filtrarModelos(){
+  const prod=n(document.getElementById('ep').value);
+  const mods=prods.filter(p=>!prod||n(p.nombre).includes(prod)).map(p=>p.modelo);
+  const e=document.getElementById('dl-mod');if(e)e.innerHTML=[...new Set(mods)].map(x=>`<option value="${x}">`).join('');
+}
+function filtrarCodigos(){
+  const prod=n(document.getElementById('ep').value),mod=n(document.getElementById('em').value);
+  const cods=prods.filter(p=>(!prod||n(p.nombre).includes(prod))&&(!mod||n(p.modelo).includes(mod))).map(p=>p.codigo_fab);
+  const e=document.getElementById('dl-cod');if(e)e.innerHTML=[...new Set(cods)].map(x=>`<option value="${x}">`).join('');
+}
+function filtrarColores(){
+  const prod=n(document.getElementById('ep').value),mod=n(document.getElementById('em').value),cod=n(document.getElementById('ec').value);
+  const cols=prods.filter(p=>(!prod||n(p.nombre).includes(prod))&&(!mod||n(p.modelo).includes(mod))&&(!cod||n(p.codigo_fab).includes(cod))).flatMap(p=>p.variantes.map(v=>v.color));
+  document.querySelectorAll('[id^="dl-color-"]').forEach(dl=>{dl.innerHTML=[...new Set(cols)].map(x=>`<option value="${x}">`).join('');});
+}
+
+function go(name){
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  ['stock','entrada','salida','movimientos','editar'].forEach(nm=>{
+    document.getElementById('nt-'+nm).className='nt '+nm[0]+(nm===name?' on':'');
+  });
+  document.getElementById('pnl-'+name).classList.add('on');
+  if(name==='salida')      initS();
+  if(name==='movimientos') renderMov();
+  if(name==='stock')       renderStock();
+}
+
+// ── QR ───────────────────────────────────────────────
+function makeQR(el, code){
+  try{
+    el.innerHTML='';
+    new QRCode(el,{text:code,width:80,height:80,colorDark:'#1a0a2e',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  }catch(e){}
+}
+function makeQRLarge(el, code){
+  try{
+    el.innerHTML='';
+    new QRCode(el,{text:code,width:180,height:180,colorDark:'#1a0a2e',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
+  }catch(e){}
+}
+function imprimirQR(divId, cod){
+  const div=document.getElementById(divId);
+  const img=div.querySelector('img')||div.querySelector('canvas');
+  if(!img){toast('⚠️ QR no disponible');return;}
+  const src=img.toDataURL?img.toDataURL():img.src;
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>QR ${cod}</title></head><body style="text-align:center;padding:20px;font-family:sans-serif">
+    <h2 style="color:#1a0a2e">Baby Gust Child</h2>
+    <p style="font-size:14px;margin-bottom:10px"><b>${cod}</b></p>
+    <img src="${src}" style="width:200px;height:200px;display:block;margin:0 auto"/>
+    <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`);
+  w.document.close();
+}
+
+// ── STOCK ─────────────────────────────────────────────
+function renderStock(){
+  const raw=(document.getElementById('buscador')?.value||'').trim();
+  const list=document.getElementById('slist');
+  const ri=document.getElementById('rinfo');
+  if(!raw){ri.style.display='none';limpiar();return;}
+  const words=n(raw).split(' ').filter(Boolean);
+  const fil=prods.filter(p=>{
+    const hay=[n(p.marca),n(p.nombre),n(p.modelo),n(p.codigo_fab),n(p.bgc_code),n(p.extra),
+               ...p.variantes.map(v=>n(v.color)),
+               ...p.variantes.map(v=>n(v.observacion))].join('|');
+    return words.every(w=>hay.includes(w));
+  });
+  ri.style.display='block';
+  document.getElementById('rcnt').textContent=fil.length;
+  if(!fil.length){list.innerHTML='<div class="empty"><span class="eico">😕</span><h3>Sin resultados</h3><p>Probá con otro término</p></div>';return;}
+
+  list.innerHTML=fil.map((p,idx)=>{
+    const total=p.variantes.reduce((s,v)=>s+v.stock,0);
+    const e=emo(p.nombre,p.modelo);
+    const priceChip=p.precio?`<span class="mchip mchip-price"><i class="ti ti-currency-dollar"></i>$ ${Number(p.precio).toLocaleString('es-AR')}</span>`:'';
+    const marcaDiv=p.marca?`<div class="pc-marca">${p.marca}</div>`:'';
+    const extra=p.extra?`<div class="pc-extra"><i class="ti ti-notes"></i>${p.extra}</div>`:'';
+
+    // Agrupar variantes por color con colores reales
+    const colorMap={};
+    p.variantes.forEach(v=>{if(!colorMap[v.color])colorMap[v.color]=[];colorMap[v.color].push(v);});
+    const colorsHtml=Object.entries(colorMap).map(([color,vars])=>{
+      const tot=vars.reduce((s,v)=>s+v.stock,0);
+      const hex=getColorFor(color);
+      const bgPill=hex2rgba(hex,.18),brdPill=hex2rgba(hex,.5);
+      const varsHtml=vars.map(v=>{
+        const sc=v.stock<=0?'#f87171':getColorFor(color);
+        const vbg=hex2rgba(sc,.12),vbrd=hex2rgba(sc,.4);
+        const label=v.observacion||color;
+        return `<span style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:600;background:${vbg};border:1.5px solid ${vbrd}">
+          <span style="width:8px;height:8px;border-radius:50%;background:${sc};flex-shrink:0"></span>
+          <span style="color:${sc};font-weight:700">${label}</span>
+          <span style="font-weight:900;color:${sc}">${v.stock} ${p.unit}</span>
+        </span>`;
+      }).join('');
+      return `<div style="margin-bottom:12px;padding:10px 12px;background:${hex2rgba(hex,.06)};border:1px solid ${hex2rgba(hex,.2)};border-left:3px solid ${hex};border-radius:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="width:12px;height:12px;border-radius:50%;background:${hex};border:1.5px solid rgba(255,255,255,.25);flex-shrink:0"></span>
+          <span style="font-family:var(--F);font-size:13px;font-weight:800;color:${hex}">${color}</span>
+          <span style="font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:${bgPill};border:1px solid ${brdPill};color:${hex};font-family:var(--F);margin-left:auto">${tot} ${p.unit}</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">${varsHtml}</div>
+      </div>`;
+    }).join('');
+      return `<div class="color-group">
+        <div class="color-group-header">
+          <span class="color-name">${color}</span>
+          <span class="color-total ${totalColor<=0?'out':''}">${totalColor} ${p.unit}</span>
+        </div>
+        <div class="color-vars">${vars.map(v=>{
+          const cls=v.stock<=0?'vch vno':'vch vok';
+          const label=v.observacion?`${v.observacion}`:color;
+          return `<span class="${cls}"><span class="vdot"></span><span>${label}</span><span class="vqty">${v.stock} ${p.unit}</span></span>`;
+        }).join('')}</div>
+      </div>`;
+    }).join('');
+
+    return `<div class="pc">
+      <div class="pc-stripe"></div>
+      <div class="pc-body">
+        <div class="pc-top">
+          <div class="pc-emo">${e}</div>
+          <div class="pc-info">
+            ${marcaDiv}
+            <div class="pc-name">${p.nombre}</div>
+            <div class="pc-mod">Modelo: ${p.modelo}</div>
+            <div class="pc-chips">
+              <span class="mchip"><i class="ti ti-barcode"></i>${p.codigo_fab}</span>
+              <span class="mchip mchip-bgc"><i class="ti ti-qrcode"></i>${p.bgc_code||'—'}</span>
+              ${priceChip}
+            </div>
+            ${extra}
+          </div>
+          <div class="pc-tot">
+            <div class="tnum ${total<=0?'out':'ok'}">${total}</div>
+            <div class="tunit">${p.unit}</div>
+            <div class="tbadge ${total<=0?'tout':'tok'}">${total<=0?'SIN STOCK':'EN STOCK'}</div>
+          </div>
+        </div>
+        <div class="pc-vars"><div class="vlbl">Stock por color</div>${colorsHtml}</div>
+        ${p.bgc_code?`
+        <div class="pc-qr-section">
+          <div class="pc-qr-box"><div id="qr-${idx}" style="width:80px;height:80px"></div></div>
+          <div class="pc-qr-info">
+            <div class="pc-qr-code">${p.bgc_code}</div>
+            <button class="pc-qr-btn" onclick="imprimirQR('qr-${idx}','${p.bgc_code}')">
+              <i class="ti ti-printer"></i> Imprimir QR
+            </button>
+          </div>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Generar QRs después del render
+  fil.forEach((p,idx)=>{
+    if(p.bgc_code){
+      const el=document.getElementById('qr-'+idx);
+      if(el) makeQR(el,p.bgc_code);
+    }
+  });
+}
+
+// ── MULTI-COLOR ENTRADA ───────────────────────────────
+let colorFilas=0;
+function agregarColorFila(cv='',qv='',ov=''){
+  colorFilas++;
+  const id=colorFilas;
+  const div=document.createElement('div');
+  div.id='cfila-'+id;div.className='cfila';
+  div.innerHTML=`
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;gap:6px">
+        <input class="fin" id="ccolor-${id}" type="text" list="dl-color-${id}"
+          style="flex:1;padding:8px 10px;font-size:13px" placeholder="Color" value="${cv}" autocomplete="off"/>
+        <datalist id="dl-color-${id}"></datalist>
+        <input class="fin" id="cqty-${id}" type="number" min="1"
+          style="width:72px;padding:8px 10px;font-size:13px" placeholder="Cant." value="${qv}"/>
+      </div>
+      <input class="fin" id="cobs-${id}" type="text"
+        style="padding:7px 10px;font-size:12px;border-color:rgba(167,139,250,.3)"
+        placeholder="Observación ej: Frozen, Limpio, Sucio..." value="${ov}"/>
+    </div>
+    <button type="button" class="cfila-rm" onclick="quitarColorFila(${id})"><i class="ti ti-x"></i></button>`;
+  document.getElementById('colores-lista').appendChild(div);
+  filtrarColores();
+}
+function quitarColorFila(id){const el=document.getElementById('cfila-'+id);if(el)el.remove();}
+function getColoresFilas(){
+  const res=[];
+  document.querySelectorAll('[id^="cfila-"]').forEach(row=>{
+    const id=row.id.replace('cfila-','');
+    const color=(document.getElementById('ccolor-'+id)?.value||'').trim();
+    const qty=parseInt(document.getElementById('cqty-'+id)?.value||'0');
+    const obs=(document.getElementById('cobs-'+id)?.value||'').trim();
+    if(color&&qty>0) res.push({color:color.charAt(0).toUpperCase()+color.slice(1),qty,observacion:obs});
+  });
+  return res;
+}
+
+async function entrada(){
+  const marca=document.getElementById('emarca').value.trim();
+  const prod=document.getElementById('ep').value.trim();
+  const mod=document.getElementById('em').value.trim();
+  const cod=document.getElementById('ec').value.trim();
+  const unit=document.getElementById('eu').value;
+  const pr=document.getElementById('epr').value||'';
+  const ext=document.getElementById('ex').value.trim();
+  const colores=getColoresFilas();
+  if(!prod||!mod||!cod){toast('⚠️ Completá producto, modelo y código');return;}
+  if(!colores.length){toast('⚠️ Agregá al menos un color con cantidad');return;}
+  const btn=document.getElementById('bing');
+  btn.disabled=true;sy('sy');
+  let bgcGenerado='';
+  try{
+    for(const c of colores){
+      const r=await apiP({action:'entrada',marca,nombre:prod,modelo:mod,codigo_fab:cod,unit,color:c.color,qty:c.qty,precio:pr,extra:ext,observacion:c.observacion});
+      if(!r.ok){toast('❌ Error en '+c.color+': '+(r.error||''));sy('er');btn.disabled=false;return;}
+      if(!bgcGenerado) bgcGenerado=r.bgc_code;
+    }
+    toast('✅ '+colores.length+' color(es) ingresados · '+prod+' '+mod);
+    if(bgcGenerado){
+      const prev=document.getElementById('bc-preview');
+      prev.classList.add('on');
+      document.getElementById('bc-cod-txt').textContent=bgcGenerado;
+      makeQRLarge(document.getElementById('bc-qr'),bgcGenerado);
+      prev.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    ['emarca','ep','em','ec','epr','ex'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('colores-lista').innerHTML='';
+    colorFilas=0;agregarColorFila();
+    await cargarDatos();
+  }catch(e){toast('❌ Sin conexión');sy('er');}
+  btn.disabled=false;
+}
+
+// ── SALIDA ────────────────────────────────────────────
+function initS(){
+  const uniq=[...new Set(prods.map(p=>p.nombre))];
+  document.getElementById('sp').innerHTML='<option value="">— seleccioná producto —</option>'+uniq.map(n=>`<option>${n}</option>`).join('');
+  ['sm','sk','sc'].forEach(id=>document.getElementById(id).innerHTML='<option value="">—</option>');
+}
+function onSP(){
+  const prod=document.getElementById('sp').value;
+  const mods=[...new Set(prods.filter(p=>p.nombre===prod).map(p=>p.modelo))];
+  document.getElementById('sm').innerHTML='<option value="">— seleccioná modelo —</option>'+mods.map(m=>`<option>${m}</option>`).join('');
+  ['sk','sc'].forEach(id=>document.getElementById(id).innerHTML='<option value="">—</option>');
+}
+function onSM(){
+  const prod=document.getElementById('sp').value,mod=document.getElementById('sm').value;
+  const items=prods.filter(x=>x.nombre===prod&&x.modelo===mod);
+  document.getElementById('sk').innerHTML='<option value="">— seleccioná código —</option>'+
+    items.map(p=>`<option value="${p.key}">${p.codigo_fab} (${p.bgc_code||'sin BGC'})</option>`).join('');
+  document.getElementById('sc').innerHTML='<option value="">—</option>';
+}
+function onSK(){
+  const key=document.getElementById('sk').value,p=prods.find(x=>x.key===key);
+  if(!p) return;
+  document.getElementById('sc').innerHTML='<option value="">— elegí variante —</option>'+
+    p.variantes.map(v=>{
+      const label=v.color+(v.observacion?' · '+v.observacion:'');
+      const val=v.color+'||'+v.observacion;
+      return `<option value="${val}" ${v.stock<=0?'disabled':''}>${label} — ${v.stock} ${p.unit}${v.stock<=0?' (sin stock)':''}</option>`;
+    }).join('');
+}
+async function salida(){
+  const key=document.getElementById('sk').value;
+  const varVal=document.getElementById('sc').value;
+  const qty=parseInt(document.getElementById('sq').value);
+  const mot=document.getElementById('smt').value.trim();
+  if(!key||!varVal||!qty||qty<1){toast('⚠️ Completá todos los campos');return;}
+  const[color,observacion]=varVal.split('||');
+  const p=prods.find(x=>x.key===key);
+  const v=p?.variantes.find(x=>x.color===color&&x.observacion===(observacion||''));
+  if(!p||!v){toast('❌ Variante no encontrada');return;}
+  if(qty>v.stock){toast('❌ Solo hay '+v.stock+' '+p.unit+' de '+color+(observacion?' · '+observacion:''));return;}
+  sy('sy');
+  try{
+    const r=await apiP({action:'salida',key:p.key,color,observacion:observacion||'',qty,motivo:mot,marca:p.marca||'',nombre:p.nombre,modelo:p.modelo,bgc_code:p.bgc_code||'',unit:p.unit});
+    if(r.ok){toast('🛒 -'+qty+' · '+p.nombre+' '+p.modelo+' '+color+(observacion?' '+observacion:''));['sq','smt'].forEach(id=>document.getElementById(id).value='');await cargarDatos();initS();}
+    else{toast('❌ '+(r.error||'Error'));sy('er');}
+  }catch(e){toast('❌ Sin conexión');sy('er');}
+}
+
+// ── HISTORIAL ─────────────────────────────────────────
+function renderMov(){
+  const list=document.getElementById('mlist');
+  if(!movs.length){list.innerHTML='<div class="empty"><span class="eico">📋</span><h3>Sin movimientos</h3></div>';return;}
+  list.innerHTML=movs.map(m=>{
+    const e=emo(m.nombre||'',m.modelo||''),cls=m.tipo==='entrada'?'en':'sa';
+    return `<div class="mc">
+      <div class="mico mi-${cls}"><i class="ti ${m.tipo==='entrada'?'ti-arrow-bar-to-down':'ti-arrow-bar-to-up'}"></i></div>
+      <div class="mb">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+          <span style="font-family:var(--F);font-size:10px;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:var(--p2)">${m.nro_op||''}</span>
+          <span style="font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase">${m.tipo}</span>
+          ${m.bgc_code?`<span style="font-size:10px;font-weight:700;color:var(--p3)">${m.bgc_code}</span>`:''}
+        </div>
+        <div class="mp">${e} ${m.marca?m.marca+' · ':''} ${m.nombre} ${m.modelo||''}</div>
+        <div class="mm">${m.color}${m.observacion?' · '+m.observacion:''}</div>
+        ${m.motivo?`<div class="md">${m.motivo}</div>`:''}
+        <div class="mf"><i class="ti ti-clock"></i>${m.fecha}</div>
+      </div>
+      <div class="mq ${cls}">${m.tipo==='entrada'?'+':'-'}${m.qty}<div class="mqu">${m.unit}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── EDITAR ────────────────────────────────────────────
+let keySeleccionado='';
+function renderEditList(){
+  const q=(document.getElementById('edit-search')?.value||'').trim();
+  const list=document.getElementById('edit-list');
+  document.getElementById('fusionar-panel').style.display='none';
+  if(!q){list.innerHTML='';return;}
+  const words=n(q).split(' ').filter(Boolean);
+  const fil=prods.filter(p=>[n(p.marca),n(p.nombre),n(p.modelo),n(p.codigo_fab)].join('|').split('|').some(x=>words.every(w=>x.includes(w)||[n(p.marca),n(p.nombre),n(p.modelo),n(p.codigo_fab)].join(' ').includes(w))));
+  if(!fil.length){list.innerHTML='<div style="font-size:12px;color:var(--tx3);text-align:center;padding:1rem">Sin resultados</div>';return;}
+  list.innerHTML=fil.map(p=>{
+    const total=p.variantes.reduce((s,v)=>s+v.stock,0);
+    return `<div onclick="seleccionarParaEditar('${p.key}')"
+      style="background:var(--bg3);border:1.5px solid var(--b2);border-radius:var(--rl);padding:.75rem 1rem;cursor:pointer;display:flex;align-items:center;gap:10px">
+      <div style="font-size:22px">${emo(p.nombre,p.modelo)}</div>
+      <div style="flex:1;min-width:0">
+        ${p.marca?`<div style="font-size:10px;color:var(--p4);font-weight:700;font-family:var(--F)">${p.marca}</div>`:''}
+        <div style="font-family:var(--F);font-size:14px;font-weight:700;color:var(--tx)">${p.nombre}</div>
+        <div style="font-size:11px;color:var(--p2)">Modelo: ${p.modelo}</div>
+        <div style="font-size:10px;color:var(--tx3)">${p.codigo_fab} · ${p.bgc_code||'sin BGC'}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--F);font-size:20px;font-weight:900;color:${total<=0?'var(--p6)':'var(--p5)'}">${total}</div>
+        <div style="font-size:10px;color:var(--tx3)">${p.unit}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function seleccionarParaEditar(key){
+  keySeleccionado=key;
+  const p=prods.find(x=>x.key===key);if(!p) return;
+  const total=p.variantes.reduce((s,v)=>s+v.stock,0);
+  document.getElementById('fus-origen-txt').innerHTML=
+    `${emo(p.nombre,p.modelo)} ${p.marca?'<b style="color:var(--p4)">'+p.marca+'</b> · ':''}<b>${p.nombre}</b> — ${p.modelo} · ${p.codigo_fab}<br>
+     <span style="color:var(--tx3);font-size:11px">${p.bgc_code||'sin BGC'} · ${total} ${p.unit}</span>`;
+  document.getElementById('fus-destino').innerHTML='<option value="">— seleccioná el correcto —</option>'+
+    prods.filter(x=>x.key!==key).map(x=>`<option value="${x.key}">${x.nombre} — ${x.modelo} (${x.codigo_fab})</option>`).join('');
+  document.getElementById('fusionar-panel').style.display='block';
+  document.getElementById('fusionar-panel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+async function confirmarFusion(){
+  const kd=document.getElementById('fus-destino').value;
+  if(!kd){toast('⚠️ Seleccioná el destino');return;}
+  if(!confirm('¿Confirmar fusión?')) return;
+  sy('sy');
+  try{
+    const r=await apiP({action:'fusionarProducto',keyOrigen:keySeleccionado,keyDestino:kd});
+    if(r.ok){toast('✅ Fusión exitosa');document.getElementById('edit-search').value='';document.getElementById('edit-list').innerHTML='';document.getElementById('fusionar-panel').style.display='none';keySeleccionado='';await cargarDatos();}
+    else{toast('❌ '+(r.error||'Error'));sy('er');}
+  }catch(e){toast('❌ Sin conexión');sy('er');}
+}
+async function confirmarEliminar(){
+  const p=prods.find(x=>x.key===keySeleccionado);if(!p) return;
+  if(!confirm('¿Eliminar "'+p.nombre+' '+p.modelo+'" completamente?')) return;
+  sy('sy');
+  try{
+    const r=await apiP({action:'eliminarProducto',key:keySeleccionado});
+    if(r.ok){toast('🗑️ Eliminado');document.getElementById('edit-search').value='';document.getElementById('edit-list').innerHTML='';document.getElementById('fusionar-panel').style.display='none';keySeleccionado='';await cargarDatos();}
+    else{toast('❌ '+(r.error||'Error'));sy('er');}
+  }catch(e){toast('❌ Sin conexión');sy('er');}
+}
+
+
+// ── LOGIN ─────────────────────────────────────────────
+const USUARIOS=[
+  {nombre:'Bertha',  clave:'72654752'},
+  {nombre:'Gustavo', clave:'70131272'},
+  {nombre:'Usuario', clave:'BGC2026'},
+];
+let usuarioActual='';
+
+function iniciarSesion(){
+  const u=document.getElementById('login-user').value.trim().toLowerCase();
+  const c=document.getElementById('login-pass').value.trim().toLowerCase();
+  const match=USUARIOS.find(x=>x.nombre.toLowerCase()===u && x.clave.toLowerCase()===c);
+  if(!match){
+    document.getElementById('login-err').classList.add('on');
+    document.getElementById('login-pass').value='';
+    document.getElementById('login-pass').focus();
+    setTimeout(()=>document.getElementById('login-err').classList.remove('on'),2500);
+    return;
+  }
+  usuarioActual=match.nombre;
+  // sessionStorage: se borra al cerrar el navegador, pide login de nuevo
+  sessionStorage.setItem('bgc_session', match.nombre);
+  const ls=document.getElementById('login-screen');
+  ls.classList.add('off');
+  setTimeout(()=>{
+    ls.style.display='none';
+    document.getElementById('fhdr').textContent='👋 Hola, '+match.nombre+' — '+new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+    cargarDatos().then(()=>setTimeout(()=>document.getElementById('ldg').classList.add('off'),700));
+  },400);
+}
+
+// Verificar sesión activa (solo dura mientras el navegador esté abierto)
+const _sess=sessionStorage.getItem('bgc_session');
+document.getElementById('fhdr').textContent=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+agregarColorFila();
+go('stock');
+if(_sess){
+  // Sesión activa — entrar directo
+  usuarioActual=_sess;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('fhdr').textContent='👋 Hola, '+_sess+' — '+new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  cargarDatos().then(()=>setTimeout(()=>document.getElementById('ldg').classList.add('off'),700));
+} else {
+  // Sin sesión — mostrar login
+  document.getElementById('ldg').classList.add('off');
+}
+</script>
+</body>
+</html>
